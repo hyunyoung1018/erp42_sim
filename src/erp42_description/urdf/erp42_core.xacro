@@ -1,0 +1,170 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:property name="wheel_radius" value="0.28" />
+  <xacro:property name="wheel_length" value="0.15" />
+  <xacro:property name="wheel_mass" value="5" />
+  <xacro:property name="disk_radius" value="0.1" />
+  <xacro:property name="disk_length" value="0.03" />
+  <xacro:property name="disk_mass" value="2" />
+
+  <material name="Gray">
+    <color rgba="0.7 0.7 0.7 1.0"/>
+  </material>
+  <material name="Green">
+    <color rgba="0 1.0 0 1.0"/>
+  </material>
+
+  <link name="base_link"/>
+
+  <joint name="base_link_to_structure" type="fixed">
+    <parent link="base_link"/>
+    <child link="structure"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="structure">
+    <visual name="visual">
+      <origin xyz="0 0 -0.03" rpy="0 0 3.14" />
+      <geometry>
+        <mesh filename="package://erp42_description/meshes/erp42_structure.dae" scale="1 1 1"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.03" rpy="0 0 3.14" />
+      <geometry>
+        <mesh filename="package://erp42_description/meshes/erp42_structure.dae" scale="1 1 1"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="160"/>
+      <origin xyz="0 0 0" />
+      <inertia ixx="20.43" ixy="0.584" ixz="-0.191" iyy="54.197" iyz="-0.2449" izz="72.2588"/>
+    </inertial>
+  </link>
+
+  <xacro:macro name="wheel" params="prefix suffix x y z pitch yall">
+    <link name="${prefix}_${suffix}_wheel">
+      <visual>
+        <origin xyz="${x} ${y} ${z}" rpy="1.5707 ${pitch} ${yall}" />
+        <geometry>
+          <mesh filename="package://erp42_description/meshes/caucho.dae" scale="1 1 1"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="1.5707 0 0" />
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_length}"/> 
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="${wheel_mass}" />
+        <origin xyz="0 0 0" rpy="1.5707 0 0" />
+        <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+      </inertial>
+    </link>
+  </xacro:macro>
+
+  <xacro:macro name="disk_wheel" params="prefix suffix roll pitch yall">  
+    <link name="${prefix}_${suffix}_disk_wheel">
+      <visual>
+        <origin xyz="0 0 0" rpy="${roll} ${pitch} ${yall}" />
+        <geometry>
+          <mesh filename="package://erp42_description/meshes/disk.dae" scale="1 1 1"/>
+        </geometry>
+        <material name="Green"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="1.5707 0 0" />
+        <geometry>
+          <cylinder radius="${disk_radius}" length="${disk_length}"/> 
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="${disk_mass}"/>
+        <origin xyz="0 0 0" rpy="${roll} ${pitch} ${yall}" />
+        <inertia ixx="1.0" ixy="0" ixz="0" iyy="1.0" iyz="0" izz="1.0"/>
+      </inertial>
+    </link>
+  </xacro:macro>
+
+  <xacro:macro name="disk_back_wheel" params="prefix suffix roll pitch yall">  
+    <link name="${prefix}_${suffix}_disk_wheel">
+      <visual>
+        <origin xyz="0 0 0" rpy="${roll} ${pitch} ${yall}" />
+        <geometry>
+          <mesh filename="package://erp42_description/meshes/disk.dae" scale="1 1 1"/>
+        </geometry>
+        <material name="Green"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="1.5707 0 0" />
+        <geometry>
+          <cylinder radius="${disk_radius}" length="${disk_length}"/> 
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="${disk_mass}"/>
+        <origin xyz="0 0 0" rpy="${roll} ${pitch} ${yall}" />
+        <inertia ixx="1.0" ixy="0" ixz="0" iyy="1.0" iyz="0" izz="1.0"/>
+      </inertial>
+    </link>
+  </xacro:macro>
+
+  <xacro:macro name="front_disk_wheel_joint" params="prefix suffix x y z">
+    <joint name="${prefix}_${suffix}_disk_wheel_joint" type="revolute">
+      <axis xyz="0 0 1" />
+      <parent link="structure"/>
+      <child link="${prefix}_${suffix}_disk_wheel"/>
+      <origin xyz="${x} ${y} ${z}" />
+      <limit effort="1000.0" lower="-0.4" upper="0.4" velocity="2.0"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="back_disk_wheel_joint" params="prefix suffix x y z">
+    <joint name="${prefix}_${suffix}_disk_wheel_joint" type="fixed">
+      <parent link="structure"/>
+      <child link="${prefix}_${suffix}_disk_wheel"/>
+      <origin xyz="${x} ${y} ${z}" />
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="wheel_front_joint" params="prefix suffix x y z">
+    <joint name="${prefix}_${suffix}_wheel_joint" type="continuous">
+      <axis xyz="0 1 0" />
+      <parent link="${prefix}_${suffix}_disk_wheel"/>
+      <child link="${prefix}_${suffix}_wheel"/>
+      <origin xyz="${x} ${y} ${z}" />
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="wheel_back_joint" params="prefix suffix x y z">
+    <joint name="${prefix}_${suffix}_wheel_joint" type="continuous">
+      <axis xyz="0 1 0" />
+      <parent link="${prefix}_${suffix}_disk_wheel"/>
+      <child link="${prefix}_${suffix}_wheel"/>
+      <origin xyz="${x} ${y} ${z}" />
+    </joint>
+  </xacro:macro>
+
+  <xacro:disk_wheel prefix="right" suffix="front" roll="0" pitch="0" yall="1.5707"/>
+  <xacro:disk_wheel prefix="left" suffix="front" roll="0" pitch="0" yall="-1.5707"/>
+  <xacro:disk_back_wheel prefix="right" suffix="back" roll="0" pitch="0" yall="1.5707"/>
+  <xacro:disk_back_wheel prefix="left" suffix="back" roll="0" pitch="0" yall="-1.5707"/>
+
+  <xacro:front_disk_wheel_joint prefix="right"  suffix="front" x="0.53" y="-0.51" z="0"/>
+  <xacro:front_disk_wheel_joint prefix="left" suffix="front" x="0.53" y="0.51" z="0"/>
+  <xacro:back_disk_wheel_joint prefix="right" suffix="back" x="-0.49" y="-0.51" z="0"/>
+  <xacro:back_disk_wheel_joint prefix="left" suffix="back" x="-0.49" y="0.51" z="0"/>
+
+  <xacro:wheel prefix="right" suffix="front" x="0" y="0" z="0" pitch="0" yall="1.5707"/> 
+  <xacro:wheel prefix="left" suffix="front" x="0" y="0" z="0" pitch="3.1414" yall="1.5707"/>
+  <xacro:wheel prefix="right" suffix="back" x="0" y="0" z="0" pitch="0" yall="1.5707"/>
+  <xacro:wheel prefix="left" suffix="back" x="0" y="0" z="0" pitch="3.1414" yall="1.5707"/>
+
+  <xacro:wheel_front_joint prefix="right" suffix="front" x="0" y="-0.08" z="0"/>
+  <xacro:wheel_front_joint prefix="left" suffix="front" x="0" y="0.08" z="0" />
+  <xacro:wheel_back_joint prefix="right" suffix="back" x="0" y="-0.08" z="0" />
+  <xacro:wheel_back_joint prefix="left" suffix="back" x="0" y="0.08" z="0" />
+
+</robot>
