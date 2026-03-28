@@ -25,7 +25,7 @@
   <joint name="imu_joint" type="fixed">
     <parent link="structure"/>
     <child link="imu_link"/>
-    <origin xyz="0.0 0.0 0.15" rpy="0 0 0"/>
+    <origin xyz="0.0 0.0 1.18" rpy="0 0 0"/>
   </joint>
 
   <link name="gps_link">
@@ -52,7 +52,7 @@
   <joint name="gps_joint" type="fixed">
     <parent link="structure"/>
     <child link="gps_link"/>
-    <origin xyz="0.2 0.0 0.2" rpy="0 0 0"/>
+    <origin xyz="0.0 0.0 1.38" rpy="0 0 0"/>
   </joint>
 
 </robot>
