@@ -10,10 +10,12 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     description_pkg_path = get_package_share_directory('erp42_description')
+    gazebo_pkg_path = get_package_share_directory('erp42_gazebo')
+    models_path = os.path.join(gazebo_pkg_path, 'models')
     
     set_gazebo_model_path = SetEnvironmentVariable(
         name='GAZEBO_MODEL_PATH',
-        value=[os.path.join(description_pkg_path, '..')]
+        value=[os.path.join(description_pkg_path, '..'), ':', models_path]
     )
 
     description_share = FindPackageShare('erp42_description')
@@ -21,7 +23,7 @@ def generate_launch_description():
     gazebo_ros_share = FindPackageShare('gazebo_ros')
     
     default_model_path = PathJoinSubstitution([description_share, 'urdf', 'erp42.urdf.xacro'])
-    world_path = PathJoinSubstitution([gazebo_share, 'worlds', 'empty.world'])
+    world_path = PathJoinSubstitution([gazebo_share, 'worlds', 'inu.world'])
     
     # 1. Robot State Publisher
     robot_state_publisher_node = Node(
@@ -45,7 +47,14 @@ def generate_launch_description():
     spawn_entity = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
-        arguments=['-topic', 'robot_description', '-entity', 'erp42'],
+        arguments=[
+            '-topic', 'robot_description', 
+            '-entity', 'erp42',
+            '-x', '131.634505',
+            '-y', '-181.059079',
+            '-z', '0.6',
+            '-Y', '0.911411'
+        ],
         output='screen'
     )
 

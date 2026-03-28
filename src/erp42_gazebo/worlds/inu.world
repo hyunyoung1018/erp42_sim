@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="inu">
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose>111.237427 -207.493774 49.090794 0.0 0.991644 0.908192</pose>
+      </camera>
+    </gui>
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+    <include>
+      <uri>model://inu</uri>
+      <pose>0 0 0 0 0 0</pose>
+    </include>
+
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <latitude_deg>37.37518</latitude_deg>
+      <longitude_deg>126.63228</longitude_deg>
+      <elevation>0.0</elevation>
+      <heading_deg>180</heading_deg>
+    </spherical_coordinates>
+  </world>
+</sdf>
