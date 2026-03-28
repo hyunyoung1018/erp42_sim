@@ -34,11 +34,23 @@ erp42_sim/
     │   ├── CMakeLists.txt
     │   └── package.xml
     │
-    └── erp42_gazebo/
+    ├── erp42_gazebo/
+    │   ├── launch/
+    │   │   └── gazebo.launch.py            # Launch file for Gazebo, spawning the model, and loading controllers
+    │   ├── modles/
+    │   │   └── inu/                        # map models
+    │   ├── worlds/
+    │   │   └── empty.world                 # Empty Gazebo world
+    │   ├── CMakeLists.txt
+    │   └── package.xml
+    │
+    └── erp42_localization/
+        ├── config/                         # Parameters for robot_localization
+        │   ├── ekf_global.yaml
+        │   ├── ekf_local.yaml
+        │   └── navsat_transform.yaml
         ├── launch/
-        │   └── gazebo.launch.py            # Launch file for Gazebo, spawning the model, and loading controllers
-        ├── worlds/
-        │   └── empty.world                 # Empty Gazebo world
+        │   └── localization.launch.py      # Launch file for robot_localization ekf_node, navsat_transform_node
         ├── CMakeLists.txt
         └── package.xml
 ```
